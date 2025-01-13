@@ -2,11 +2,24 @@ import streamlit as st
 import pickle
 import pandas as pd
 import requests
+import os
 
 movies_dict=pickle.load(open('movie_dict.pkl','rb'))
 movies=pd.DataFrame(movies_dict)
 
-similarity=pickle.load(open('similarity.pkl','rb'))
+# similarity=pickle.load(open('similarity.pkl','rb'))
+
+def fetch_file_from_drive():
+    url = "https://drive.google.com/uc?id=1_w5MadfjUSWmMoNl_gSpjVAN08QaTLhd"
+    response = requests.get(url)
+    with open("similarity.pkl", "wb") as file:
+        file.write(response.content)
+
+if not os.path.exists("similarity.pkl"):
+    fetch_file_from_drive()
+
+# Load the similarity matrix
+similarity = pickle.load(open('similarity.pkl', 'rb'))
 
 def fetch_poster(movie_id):
      response = requests.get('https://api.themoviedb.org/3/movie/{}?api_key=3e588d3894440a7f4eaf73f5327ab1a5'.format(movie_id))
